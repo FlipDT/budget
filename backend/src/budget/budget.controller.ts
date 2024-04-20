@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { User } from 'src/auth/entities/user.entity';
 import { UserDecorator } from 'src/auth/user.decorator';
 import { BudgetService } from './budget.service';
 import { CreateOperationDto } from './dtos/create-operation.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Category } from './entities/category.entity';
+import { UpdateOperationDto } from './dtos/update-operation.dto';
 
 @Controller('budget')
 @UseGuards(AuthGuard)
@@ -26,19 +27,19 @@ export class BudgetController {
   }
 
   // Le + converti un string en number
-  //   @Patch('operations/:id')
-  //   update(
-  //     @Param('id') id: string,
-  //     @Body() updateTodoDto: UpdateTodoDto,
-  //     @UserDecorator() user: User,
-  //   ) {
-  //     return this.todoService.update(+id, updateTodoDto, user);
-  //   }
+    @Patch('operations/:id')
+    update(
+      @Param('id') id: string,
+      @Body() updateOperationDto: UpdateOperationDto,
+      @UserDecorator() user: User,
+    ) {
+      return this.budgetService.update(+id, updateOperationDto, user);
+    }
 
-  //   @Delete('operations/:id')
-  //   delete(@Param('id') id: string, @UserDecorator() user: User) {
-  //     return this.todoService.delete(+id, user);
-  //   }
+    @Delete('operations/:id')
+    delete(@Param('id') id: string, @UserDecorator() user: User) {
+      return this.budgetService.delete(+id, user);
+    }
 
   // @Get('operations/?startDate=xxx&endDate=yyy')
   // getAllOperations(@UserDecorator() user: User) {
