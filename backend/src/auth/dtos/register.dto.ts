@@ -8,8 +8,5 @@ export class RegisterDto {
     @IsNotEmpty()
     @MinLength(8)
     @MaxLength(20)
-    @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])$/, {
-        message: 'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre'
-    })
     password: string;
 }
