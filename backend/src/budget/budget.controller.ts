@@ -52,7 +52,7 @@ export class BudgetController {
 
   // http://localhost:3000/budget/category/:id
 
-  // Get AllCategories
+  // Get Category
   @Get('category/:id')
   async getCategory(@Param('id') id: number): Promise<Category> {
     const category = await this.budgetService.getCategoryById(id);
@@ -61,6 +61,13 @@ export class BudgetController {
     }
     return this.budgetService.getCategoryById(+id);
   }
+
+// Get AllCategories
+
+@Get('categories')
+getAllCategories() {
+  return this.budgetService.getAllCategories();
+}
 
   // @Get('operations/?startDate=xxx&endDate=yyy')
   // getAllOperations(@UserDecorator() user: User) {

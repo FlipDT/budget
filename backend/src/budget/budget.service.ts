@@ -70,4 +70,9 @@ export class BudgetService {
     }
     return category;
   }
+
+    async getAllCategories(): Promise<Category[]> {
+      return await this.categorysRepo.find();
+    
+  }
 }
