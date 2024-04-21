@@ -62,4 +62,12 @@ export class BudgetService {
       return { success: true };
     }
   }
+
+  async getCategoryById(id: number): Promise<Category> {
+    const category = await this.categorysRepo.findOneBy({id: id});
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
+    }
+    return category;
+  }
 }
