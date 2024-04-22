@@ -1,1 +1,39 @@
-<p>home works!</p>
+<div class="container mx-auto px-4 py-5 text-center">
+  <mat-form-field>
+    <mat-label>Choisir un mois</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      placeholder="Sélectionnez un mois"
+      (dateInput)="onDateSelected($event)"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker startView="year" mode="month"></mat-datepicker>
+  </mat-form-field>
+
+  <table class="w-2/3 mx-auto border-collapse border border-2 border-gray-950">
+    <thead>
+      <tr>
+        <th class="p-3 border w-1/2 border-2 border-gray-950">Entrée</th>
+        <th class="p-3 border w-1/2 border-2 border-gray-950">Dépenses</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Lignes du tableau à remplir au fur et à mesure -->
+      <tr *ngFor="let entryExpense of entriesAndExpenses" class="border ">
+        <td class="p-3 border border-2 border-gray-950">{{ entryExpense.entry }}</td>
+        <td class="p-3 border border-2 border-gray-950">{{ entryExpense.expense }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="p-3 border border-2 border-gray-950">Total :</td>
+        <td class="p-3 border border-2 border-gray-950">Total :</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="mt-5 flex justify-center">
+    <button mat-flat-button color="primary">Ajouter</button>
+  </div>
+</div>
