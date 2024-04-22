@@ -1,12 +1,33 @@
 import { Component } from '@angular/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatTableModule } from '@angular/material/table';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [MatDatepickerModule, MatInputModule, MatNativeDateModule, MatSelectModule, MatFormFieldModule, MatTableModule, CommonModule, MatButtonModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
+  startDate: Date | null = null;
 
+  constructor() { }
+
+  onDateSelected(event: MatDatepickerInputEvent<Date>) {
+    this.startDate = event.value;
+  }
+
+  entriesAndExpenses: { entry: string, expense: number }[] = [];
+  dropdownOptions: string[] = ['Option 1', 'Option 2', 'Option 3'];
+
+  addEntryAndExpense(entry: string, expense: number) {
+    this.entriesAndExpenses.push({ entry, expense });
+  }
 }
