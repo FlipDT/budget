@@ -11,6 +11,8 @@ import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClient } from '@angular/common/http';
+import { Operation } from './operation.interface';
+import { ApiService } from '../services/api.services';
 
 @Component({
   selector: 'app-home',
@@ -30,33 +32,33 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HomeComponent {
   startDate: Date | null = null;
+  entriesAndExpenses: Operation[] = [];
+  operations: any[] = [];
 
-  constructor(private http: HttpClient) {}
-
-  // ngOnInit(): void {
-  //   this.fetchDataFromBackend();
-  // }
-
-  // fetchDataFromBackend(): void {
-  //   this.http.get<any>('http://localhost:3000/budget/operations').subscribe(
-  //     (data: any) => {
-       
-  //       this.entriesAndExpenses = data;
-  //     },
-  //     (error) => {
-  //       console.error('Une erreur s\'est produite lors de la récupération des données:', error);
-  //     }
-  //   );
-  // }
+  constructor(private http: HttpClient, private apiService: ApiService) {}
 
   onDateSelected(event: MatDatepickerInputEvent<Date>) {
     this.startDate = event.value;
   }
 
-  entriesAndExpenses: { entry: string; expense: number }[] = [];
   dropdownOptions: string[] = ['Option 1', 'Option 2', 'Option 3'];
 
-  addEntryAndExpense(entry: string, expense: number) {
-    this.entriesAndExpenses.push({ entry, expense });
+  addEntryAndExpense(operation: Operation) {
+    this.entriesAndExpenses.push(operation);
+  }
+
+  fetchDataFromBackend(): void {
+    this.apiService.getAllOperations().subscribe(
+      (data: any) => {
+        this.operations = data;
+        console.log('Données récupérées depuis le backend :', this.operations);
+      },
+      (error) => {
+        console.error(
+          "Une erreur s'est produite lors de la récupération des données:",
+          error
+        );
+      }
+    );
   }
 }

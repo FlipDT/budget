@@ -1,3 +1,3 @@
 export const environment = {
-    api: 'http://localhost:3000/budget'
+  api: 'http://localhost:3000',
 };

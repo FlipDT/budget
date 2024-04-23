@@ -20,9 +20,8 @@
     </thead>
     <tbody>
       <!-- Lignes du tableau à remplir au fur et à mesure -->
-      <tr *ngFor="let entryExpense of entriesAndExpenses" class="border ">
-        <td class="p-3 border border-2 border-gray-950">{{ entryExpense.entry }}</td>
-        <td class="p-3 border border-2 border-gray-950">{{ entryExpense.expense }}</td>
+      <tr *ngFor="let operation of entriesAndExpenses" class="border ">
+        <td class="p-3 border border-2 border-gray-950">{{ operation.amount }}</td>
       </tr>
     </tbody>
     <tfoot>
