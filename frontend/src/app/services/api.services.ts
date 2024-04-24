@@ -28,7 +28,7 @@ export class ApiService {
   get jwtUserToken(): Observable<string> {
     return this.jwtToken$.asObservable();
   }
-  
+
   getAllOperations(): Observable<any> {
     return this.http.get(`/budget/operations`, {
       headers: {
@@ -36,19 +36,53 @@ export class ApiService {
       },
     });
   }
+
+  login(username: string, password: string) {
+    this.http
+      .post<{ access_token: string }>(`/auth/login`, {
+        username,
+        password,
+      })
+      .subscribe(
+        (response) => {
+          if (response && response.access_token) {
+            this.token = response.access_token;
+
+            localStorage.setItem('act', btoa(this.token));
+
+            this.jwtToken$.next(this.token);
+
+            this.router.navigateByUrl('/').then(() => {
+              this.toast.success('Login successful', '', {
+                timeOut: 3000,
+                positionClass: 'toast-top-center',
+              });
+            });
+          } else {
+            console.error('No token received from server');
+          }
+        },
+        (error: HttpErrorResponse) => {
+          this.toast.error('Login failed. Please try again.', '', {
+            timeOut: 3000,
+          });
+        }
+      );
+  }
+
+  logout() {
+    (this.token = ''), this.jwtToken$.next(this.token);
+    this.toast
+      .success('Logged out successfully', '', {
+        timeOut: 500,
+      })
+      .onHidden.subscribe(() => {
+        localStorage.removeItem('act');
+        this.router.navigateByUrl('/login').then();
+      });
+    return '';
+  }
 }
-
-
-//   login(logindto: LoginDto) {
-//     return this.http.post('/auth/login', logindto).pipe(
-//       catchError((err: HttpErrorResponse) => {
-//         this.toast.error('Register Failes', '', {
-//           timeOut: 3000,
-//         });
-//         throw 'Une erreur est survenu.';
-//       })
-//     );
-//   }
 
 //   register(registerDto: RegisterDto) {
 //     return this.http.post('/auth/register', registerDto).pipe(
@@ -59,19 +93,6 @@ export class ApiService {
 //         throw 'Une erreur est survenu.';
 //       })
 //     );
-//   }
-
-//   logout() {
-//     (this.token = ''), this.jwtToken$.next(this.token);
-//     this.toast
-//       .success('Logged out successfully', '', {
-//         timeOut: 500,
-//       })
-//       .onHidden.subscribe(() => {
-//         localStorage.removeItem('act');
-//         this.router.navigateByUrl('/login').then();
-//       });
-//     return '';
 //   }
 
 //   createOperation(
