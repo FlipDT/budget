@@ -13,24 +13,34 @@
 
   <table class="w-2/3 mx-auto border-collapse border border-2 border-gray-950">
     <thead>
-      <tr>
-        <th class="p-3 border w-1/2 border-2 border-gray-950">Entrée</th>
-        <th class="p-3 border w-1/2 border-2 border-gray-950">Dépenses</th>
+      <tr *ngFor="let entry of entries" class="border">
+        <td class="p-3 border border-2 border-gray-950">Entrées :</td>
+        <td class="p-3 border border-2 border-gray-950">{{ entry.amount }}</td>
+        <td class="p-3 border border-2 border-gray-950"></td> <!-- Colonne Dépenses vide -->
+      </tr>
+      <!-- Dépenses -->
+      <tr *ngFor="let expense of expenses" class="border">
+        <td class="p-3 border border-2 border-gray-950">Dépenses :</td>
+        <td class="p-3 border border-2 border-gray-950"></td> <!-- Colonne Entrées vide -->
+        <td class="p-3 border border-2 border-gray-950">{{ expense.amount }}</td>
       </tr>
     </thead>
     <tbody>
       <!-- Lignes du tableau à remplir au fur et à mesure -->
-      <tr *ngFor="let operation of entriesAndExpenses" class="border ">
-        <td class="p-3 border border-2 border-gray-950">{{ operation.amount }}</td>
+      <tr *ngFor="let operation of operations" class="border">
+        <td class="p-3 border border-2 border-gray-950" *ngIf="operation.amount >= 0">{{ operation.amount }}</td>
+        <td class="p-3 border border-2 border-gray-950" *ngIf="operation.amount < 0">{{ operation.amount }}</td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
         <td class="p-3 border border-2 border-gray-950">Total :</td>
-        <td class="p-3 border border-2 border-gray-950">Total :</td>
+        <td class="p-3 border border-2 border-gray-950"></td>
+        <td class="p-3 border border-2 border-gray-950"></td>
       </tr>
     </tfoot>
   </table>
+  
 
   <div class="mt-5 flex justify-center">
     <button mat-flat-button color="primary">Ajouter</button>
