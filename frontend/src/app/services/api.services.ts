@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, catchError } from 'rxjs';
-import { LoginDto, RegisterDto } from '../model';
+import { LoginDto, RegisterDto} from '../model';
 
 @Injectable({
   providedIn: 'root',
@@ -82,18 +82,20 @@ export class ApiService {
       });
     return '';
   }
-}
+  register(registerDto: RegisterDto) {
+     return this.http.post('/auth/register', registerDto).pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.toast.error('Register Failed', '', {
+          timeOut: 3000,
+        });
+        throw 'Une erreur est survenu.';
+      })
+     );
+    };
+    }
 
-//   register(registerDto: RegisterDto) {
-//     return this.http.post('/auth/register', registerDto).pipe(
-//       catchError((err: HttpErrorResponse) => {
-//         this.toast.error('Register Failed', '', {
-//           timeOut: 3000,
-//         });
-//         throw 'Une erreur est survenu.';
-//       })
-//     );
-//   }
+
+  
 
 //   createOperation(
 //     title: string,
