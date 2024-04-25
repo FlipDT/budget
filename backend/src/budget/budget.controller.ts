@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { User } from 'src/auth/entities/user.entity';
@@ -16,6 +17,7 @@ import { CreateOperationDto } from './dtos/create-operation.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Category } from './entities/category.entity';
 import { UpdateOperationDto } from './dtos/update-operation.dto';
+import { CreateCategoryDto } from './dtos/create-categorie.dto';
 
 @Controller('budget')
 @UseGuards(AuthGuard)
@@ -62,18 +64,24 @@ export class BudgetController {
     return this.budgetService.getCategoryById(+id);
   }
 
-// Get AllCategories
+  // Get AllCategories
 
-@Get('categories')
-getAllCategories() {
-  return this.budgetService.getAllCategories();
-}
+  @Get('categories')
+  getAllCategories() {
+    return this.budgetService.getAllCategories();
+  }
 
-  // @Get('operations/?startDate=xxx&endDate=yyy')
-  // getAllOperations(@UserDecorator() user: User) {
-  //     return this.budgetService.getAllOperations(user);
+  @Post('categories')
+  createNewCategory(@Body() createCategoryDto: CreateCategoryDto) {
+    return this.budgetService.createNewCategory(createCategoryDto);
+  }
+
+  // @Get('operations')
+  // getOperationsByDate(@UserDecorator() user: User, @Query('startDate') startDate: Date, @Query('endDate') endDate: Date) {
+  //   return this.budgetService.getOperationsByDate(user, startDate, endDate);
   //   }
-
-  // Get User
-  // @Get('users/:id')
 }
+
+
+// Get User
+// @Get('users/:id')
