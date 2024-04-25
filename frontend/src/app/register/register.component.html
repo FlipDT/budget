@@ -1,70 +1,16 @@
-<div class="text-center">
-    <div class="login-form">
-      <div class="container">
-        <div class="grid grid-cols-1 justify-center">
-          <div class="col-span-8">
-            <div class="card">
-              <div
-                class="card-header"
-                style="font-size: 2rem; font-family: Calibri, sans-serif"
-              >
-                Register
-              </div>
-              <div class="card-body">
-                <form #registerForm="ngForm" (ngSubmit)="register(registerForm)" class="my-form">
-                  <div class="form-group row">
-                    <label
-                      for="email_address"
-                      class="block text-md-right col-span-4"
-                      >Username</label
-                    >
-                    <div class="col-span-6">
-                      <input
-                        type="text"
-                        id="email_address"
-                        class="w-full px-3 py-2 border rounded-md"
-                        name="username"
-                        placeholder="Username"
-                        required
-                        autofocus
-                        ngModel
-                      />
-                    </div>
-                  </div>
-  
-                  <div class="form-group row">
-                    <label
-                      for="password"
-                      class="block text-md-right col-span-4"
-                      >Password</label
-                    >
-                    <div class="col-span-6">
-                      <input
-                        type="password"
-                        id="password"
-                        class="w-full px-3 py-2 border rounded-md"
-                        name="password"
-                        placeholder="Password"
-                        required
-                        ngModel
-                      />
-                    </div>
-                  </div>
-  
-                  <div class="col-span-6 offset-md-4 d-flex flex-col">
-                    <button
-                      type="submit"
-                      [disabled]="registerForm.invalid"
-                      class="btn btn-primary d-block flex-grow-1 mb-3"
-                    >
-                      Sign Up
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<h1>Register</h1>
+
+<form [formGroup]="form" class="flex flex-col">
+  <mat-form-field>
+    <mat-label>Username</mat-label>
+    <input matInput type="text" formControlName="username" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Password</mat-label>
+    <input matInput type="password" formControlName="password" />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="register()">
+    Register
+  </button>
+</form>

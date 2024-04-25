@@ -1,27 +1,36 @@
-.my-form
-{
+:host {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100vw;
+  }
+  
+  .my-form
+  {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
     display: flex;
-    gap: 1rem;
-    flex-flow: column;
-    
-}
-
-.my-form .row
-{
+      gap: 1rem;
+      flex-flow: column;
+  }
+  
+  .my-form .row
+  {
     margin-left: 0;
     margin-right: 0;
-}
-
-.login-form
-{
+  }
+  
+  .login-form
+  {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
-}
-
-.login-form .row
-{
+  }
+  
+  .login-form .row
+  {
     margin-left: 0;
     margin-right: 0;
-}
+  }
+  

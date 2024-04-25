@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { CreateOperationDto } from './dtos/create-operation.dto';
 import { UpdateOperationDto } from './dtos/update-operation.dto';
+import { CreateCategoryDto } from './dtos/create-categorie.dto';
 
 @Injectable()
 export class BudgetService {
@@ -14,6 +15,7 @@ export class BudgetService {
     @InjectRepository(Operation) private operationsRepo: Repository<Operation>,
     @InjectRepository(Category) private categorysRepo: Repository<Category>,
   ) {}
+
   async createNewOperation(
     createOperationDto: CreateOperationDto,
     user: User,
@@ -63,16 +65,37 @@ export class BudgetService {
     }
   }
 
+//  async getOperationsByDate(user: User, startDate: Date, endDate: Date): Promise<Operation[]> {
+//     return await this.operationsRepo.find({
+//       where: {
+//         userId: user.id,
+//         createdDate: {
+//           $gte: startDate,
+//           $lte: endDate,
+//         },
+//       },
+//     });
+//   }
+
   async getCategoryById(id: number): Promise<Category> {
-    const category = await this.categorysRepo.findOneBy({id: id});
+    const category = await this.categorysRepo.findOneBy({ id: id });
     if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
     return category;
   }
 
-    async getAllCategories(): Promise<Category[]> {
-      return await this.categorysRepo.find();
-    
+  async getAllCategories(): Promise<Category[]> {
+    return await this.categorysRepo.find();
+  }
+
+  async createNewCategory(
+    createCategoryDto: CreateCategoryDto,
+  ): Promise<Category> {
+    const { name } = createCategoryDto;
+    const category = this.categorysRepo.create({
+      name,
+    });
+    return await this.categorysRepo.save(category);
   }
 }

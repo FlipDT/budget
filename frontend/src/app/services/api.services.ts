@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, catchError } from 'rxjs';
-import { LoginDto, RegisterDto} from '../model';
+import { LoginDto, RegisterDto, Category, Operation } from '../model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +37,7 @@ export class ApiService {
     });
   }
 
-  login(username: string, password: string) {
+  login(username: string, password: string): void {
     this.http
       .post<{ access_token: string }>(`/auth/login`, {
         username,
@@ -82,35 +82,50 @@ export class ApiService {
       });
     return '';
   }
-  register(registerDto: RegisterDto) {
-     return this.http.post('/auth/register', registerDto).pipe(
-      catchError((err: HttpErrorResponse) => {
-        this.toast.error('Register Failed', '', {
-          timeOut: 3000,
-        });
-        throw 'Une erreur est survenu.';
-      })
-     );
+  
+  register(username: string, password: string): void {
+     this.http.post('/auth/register', 
+      {username, password}
+     ).subscribe(
+        () => {
+          this.toast.success('Registration successful', '', {
+            timeOut: 3000,
+            positionClass: 'toast-top-center',
+          });
+        },
+        (error: HttpErrorResponse) => {
+          this.toast.error('Registration failed. Please try again.', '', {
+            timeOut: 3000,
+          });
+        }
+      );
     };
-    }
+    
 
+  getAllCategories(): Observable<any> {
+    return this.http.get(`/budget/categories`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    });
+  }
+
+  createOperation(
+    title: string,
+    description: string,
+    amount: number,
+    selectedCategoryId: number
+  ) {
+    return this.http.post(
+      '/budget/operations',
+      { title, description, amount, categoryId: selectedCategoryId },
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      }
+    );
+  }
+}
 
   
-
-//   createOperation(
-//     title: string,
-//     description: string,
-//     amount: number,
-//     categoryId: number
-//   ) {
-//     return this.http.post(
-//       '/budget/operations',
-//       { title, description, amount, categoryId },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${this.token}`,
-//         },
-//       }
-//     );
-//   }
-// }

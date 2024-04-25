@@ -1,25 +1,44 @@
 import { Component } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { ApiService } from '../services/api.services';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule],
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  constructor(private apiService: ApiService) {}
+  constructor(private fb: FormBuilder, private apiService: ApiService) {}
 
-  register(registerForm: NgForm) {
-    if (registerForm.invalid) {
+  form = this.fb.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+  });
+
+  register() {
+    if (this.form.invalid) {
+      return;
+    }
+    const { username, password } = this.form.value;
+
+    if (!username || !password) {
       return;
     }
 
-    this.apiService.register(registerForm.value).subscribe((res) => {
-        console.log(res);
-      });
-    }
+    console.log('Registering user', username, password)
+    this.apiService.register(username, password);
   }
-
+}

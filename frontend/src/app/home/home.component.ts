@@ -11,8 +11,12 @@ import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClient } from '@angular/common/http';
-import { Operation } from './operation.interface';
+import { Operation, Category } from '../model';
 import { ApiService } from '../services/api.services';
+import { OperationComponent } from '../operation/operation.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +30,9 @@ import { ApiService } from '../services/api.services';
     MatTableModule,
     CommonModule,
     MatButtonModule,
+    OperationComponent,
+    MatDialogModule,
+    BaseChartDirective,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -33,47 +40,116 @@ import { ApiService } from '../services/api.services';
 export class HomeComponent {
   startDate: Date | null = null;
   entriesAndExpenses: Operation[] = [];
-  operations: any[] = [];
-  entries: any[] = [];
-  expenses: any[] = []
+  categories: Category[] = [];
+  operations: Operation[] = [];
+  entries: Operation[] = [];
+  expenses: Operation[] = [];
 
-  constructor(private http: HttpClient, private apiService: ApiService) {
-    this.fetchDataFromBackend();
+  constructor(
+    private http: HttpClient,
+    private apiService: ApiService,
+    private dialog: MatDialog
+  ) {
+    this.getAllOperations();
+    this.getAllCategories();
   }
+
+  // --------------------------------- CHARTS ---------------------------------
+
+  public barChartOptions = {
+    scaleShowVerticalLines: false,
+    responsive: true,
+  };
+
+  public barChartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public barChartType = 'bar';
+  public barChartLegend = true;
+
+  public barChartData = [
+    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Entries' },
+    { data: [28, 48, 40, 19, 86, 27, 90], label: 'Expenses' }
+  ];
 
   onDateSelected(event: MatDatepickerInputEvent<Date>) {
     this.startDate = event.value;
   }
-
-  dropdownOptions: string[] = ['Option 1', 'Option 2', 'Option 3'];
 
   addEntryAndExpense(operation: Operation) {
     this.entriesAndExpenses.push(operation);
   }
 
   splitOperations(operations: any[]) {
-    const entries = operations.filter(op => op.amount >= 0);
-    const expenses = operations.filter(op => op.amount < 0);
+    const entries = operations.filter((op) => op.amount >= 0);
+    const expenses = operations.filter((op) => op.amount < 0);
     return { entries, expenses };
   }
 
-  // Appeler cette méthode lorsque les données sont récupérées
-  fetchDataFromBackend(): void {
-    this.apiService.getAllOperations().subscribe(
-      (data: any[]) => {
-        // Diviser les opérations en entrées et dépenses
-        const { entries, expenses } = this.splitOperations(data);
-        
-        // Assigner les entrées et dépenses aux propriétés correspondantes
-        this.entries = entries;
-        this.expenses = expenses;
+  mapCategoryName(categoryId: number): string {
+    const category = this.categories.find((cat) => cat.id === categoryId);
+    return category ? category.name : '';
+  }
 
-        console.log('Entrées:', this.entries);
-        console.log('Dépenses:', this.expenses);
+  getAllCategories(): void {
+    this.apiService.getAllCategories().subscribe(
+      (categories: Category[]) => {
+        this.categories = categories;
       },
       (error) => {
-        console.error("Une erreur s'est produite lors de la récupération des données:", error);
+        console.log(error);
       }
     );
+  }
+
+  getAllOperations(): void {
+    this.apiService.getAllOperations().subscribe(
+      (data: any) => {
+        this.operations = data;
+        this.operations.forEach((op) => {
+          op.categoryName = this.mapCategoryName(op.categoryId);
+        });
+        const { entries, expenses } = this.splitOperations(data);
+        this.entries = entries;
+        this.expenses = expenses;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  onClickRow(operation: Operation) {
+    console.log(operation);
+  }
+
+  showOperation: boolean = false;
+
+  addOperation() {
+    this.showOperation = true;
+    const dialogRef = this.dialog.open(OperationComponent, {
+      width: '1000px',
+      hasBackdrop: true,
+      role: 'dialog',
+      height: '500px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('La fenêtre modale a été fermée.');
+      this.showOperation = false;
+    });
+
+    dialogRef.afterClosed().subscribe((data) => {
+      if (!data) return;
+      this.apiService
+        .createOperation(
+          data.title,
+          data.description,
+          data.amount,
+          data.categoryId
+        )
+        .subscribe((result: any) => {
+          console.log(result);
+          this.operations.push(result);
+        });
+    });
   }
 }
