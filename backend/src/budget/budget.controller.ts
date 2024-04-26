@@ -82,6 +82,3 @@ export class BudgetController {
   //   }
 }
 
-
-// Get User
-// @Get('users/:id')

@@ -19,6 +19,7 @@
         <th class="border border-2 border-gray-950">Titre</th>
         <th class="border border-2 border-gray-950">Description</th>
         <th class="border border-2 border-gray-950">Categorie</th>
+        <th class="border border-2 border-gray-950">Suppression</th>
       </tr>
     </thead>
     <tbody>
@@ -27,11 +28,20 @@
         <td class="border border-2 border-gray-950">{{ operation.amount }}</td>
         <td class="border border-2 border-gray-950">{{ operation.title }}</td>
         <td class="border border-2 border-gray-950">{{ operation.description }}</td>
-        <td class="border border-2 border-gray-950">{{ operation.categoryName }}
+        <td class="border border-2 border-gray-950">{{ operation.categoryName }}</td>
+        <td class="border border-2 border-gray-950">
+          <button mat-icon-button color="warn" (click)="deleteOperation(operation.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </td>
       </tr>
     </tbody>
   </table>
+  
+  
+  <div class="mt-5 flex justify-center">
+    <button mat-flat-button color="primary" (click)="addOperation()">Ajouter</button>
+  </div>
 
   <div class="mt-5">
     <canvas baseChart
@@ -41,7 +51,4 @@
       [legend]="barChartLegend"
     ></canvas>
 
-  <div class="mt-5 flex justify-center">
-    <button mat-flat-button color="primary" (click)="addOperation()">Ajouter</button>
-  </div>
 </div>

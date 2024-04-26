@@ -9,6 +9,7 @@ export interface LoginDto {
 }
 
 export interface Operation {
+  id: number;
   createdDate: Date;
   title: string;
   description: string;
