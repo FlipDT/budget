@@ -17,6 +17,7 @@ import { OperationComponent } from '../operation/operation.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-home',
@@ -33,6 +34,7 @@ import { ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
     OperationComponent,
     MatDialogModule,
     BaseChartDirective,
+    MatIconModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -44,6 +46,8 @@ export class HomeComponent {
   operations: Operation[] = [];
   entries: Operation[] = [];
   expenses: Operation[] = [];
+  filteredOperations: any[] = [];
+
 
   constructor(
     private http: HttpClient,
@@ -53,8 +57,6 @@ export class HomeComponent {
     this.getAllOperations();
     this.getAllCategories();
   }
-
-  // --------------------------------- CHARTS ---------------------------------
 
   public barChartOptions = {
     scaleShowVerticalLines: false,
@@ -152,4 +154,15 @@ export class HomeComponent {
         });
     });
   }
-}
+
+  deleteOperation(id: number) {
+    if (confirm('Voulez-vous supprimer l opération ?')) {
+      this.apiService.deleteOperation(id).subscribe((res) => {
+        if (res.success) {
+          this.operations = this.operations.filter((t: any) => t.id !== id);
+          this.filteredOperations = this.operations;
+        }
+      });
+    }
+  }
+  }
