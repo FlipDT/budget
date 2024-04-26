@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, catchError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap } from 'rxjs';
 import { LoginDto, RegisterDto, Category, Operation } from '../model';
 
 @Injectable({
@@ -125,6 +125,22 @@ export class ApiService {
         },
       }
     );
+  }
+
+  deleteOperation(operationId: number) {
+    return this.http
+    .delete<{ success: boolean }>(`/budget/operations/${operationId}`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    })
+    .pipe(
+      tap((res) => {
+        if (res.success) {
+          this.toast.success('Operation supprimé avec succès')
+        }
+      })
+    )
   }
 }
 
