@@ -35,11 +35,11 @@ export class OperationComponent {
   ) {
     this.getCategories();
   }
-  
+
   getCategories() {
     this.apiService.getAllCategories().subscribe((categories) => {
       this.categories = categories;
-      console.log(categories)
+      console.log(categories);
     });
   }
 
@@ -48,9 +48,21 @@ export class OperationComponent {
   }
 
   createOperation() {
-    console.log(this.title, this.description, this.amount, this.selectedCategory.id);
-    this.apiService.createOperation(this.title, this.description, this.amount, this.selectedCategory.id).subscribe(() => {
-      this.dialogRef.close();
-    });
+    console.log(
+      this.title,
+      this.description,
+      this.amount,
+      this.selectedCategory.id
+    );
+    this.apiService
+      .createOperation(
+        this.title,
+        this.description,
+        this.amount,
+        this.selectedCategory.id
+      )
+      .subscribe(() => {
+        this.dialogRef.close();
+      });
   }
 }
