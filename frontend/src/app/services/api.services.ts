@@ -142,6 +142,21 @@ export class ApiService {
       })
     )
   }
+
+  createCategory(
+    name: string,
+  ) {
+    return this.http.post(
+      '/budget/categories',
+      { name },
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      }
+    );
+  }
+
 }
 
   
