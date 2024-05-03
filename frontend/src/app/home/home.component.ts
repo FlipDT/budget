@@ -18,6 +18,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
 import { MatIconModule } from '@angular/material/icon';
+import { CategoryComponent } from '../category/category.component';
 
 @Component({
   selector: 'app-home',
@@ -147,6 +148,35 @@ export class HomeComponent {
           data.description,
           data.amount,
           data.categoryId
+        )
+        .subscribe((result: any) => {
+          console.log(result);
+          this.operations.push(result);
+        });
+    });
+  }
+
+showCategory: boolean = false
+
+  createCategory() {
+    this.showCategory = true;
+    const dialogRef = this.dialog.open(CategoryComponent, {
+      width: '95pw',
+      hasBackdrop: true,
+      role: 'dialog',
+      height: '500px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('La fenêtre modale a été fermée.');
+      this.showOperation = false;
+    });
+
+    dialogRef.afterClosed().subscribe((data) => {
+      if (!data) return;
+      this.apiService
+        .createCategory(
+          data.name
         )
         .subscribe((result: any) => {
           console.log(result);
