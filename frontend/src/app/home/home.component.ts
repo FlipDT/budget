@@ -7,7 +7,7 @@ import {
   MatDatepickerModule,
 } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClient } from '@angular/common/http';
@@ -35,7 +35,7 @@ import { CategoryComponent } from '../category/category.component';
     OperationComponent,
     MatDialogModule,
     BaseChartDirective,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -48,7 +48,15 @@ export class HomeComponent {
   entries: Operation[] = [];
   expenses: Operation[] = [];
   filteredOperations: any[] = [];
-
+  displayedColumns: string[] = [
+    'createdDate',
+    'amount',
+    'title',
+    'description',
+    'categoryName',
+    'actions',
+  ];
+  dataSource: MatTableDataSource<Operation>;
 
   constructor(
     private http: HttpClient,
@@ -57,6 +65,7 @@ export class HomeComponent {
   ) {
     this.getAllOperations();
     this.getAllCategories();
+    this.dataSource = new MatTableDataSource(this.operations);
   }
 
   public barChartOptions = {
@@ -64,13 +73,21 @@ export class HomeComponent {
     responsive: true,
   };
 
-  public barChartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public barChartLabels = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+  ];
   public barChartType = 'bar';
   public barChartLegend = true;
 
   public barChartData = [
     { data: [65, 59, 80, 81, 56, 55, 40], label: 'Entries' },
-    { data: [28, 48, 40, 19, 86, 27, 90], label: 'Expenses' }
+    { data: [28, 48, 40, 19, 86, 27, 90], label: 'Expenses' },
   ];
 
   onDateSelected(event: MatDatepickerInputEvent<Date>) {
@@ -113,6 +130,7 @@ export class HomeComponent {
         const { entries, expenses } = this.splitOperations(data);
         this.entries = entries;
         this.expenses = expenses;
+        this.dataSource.data = this.operations;
       },
       (error) => {
         console.log(error);
@@ -152,11 +170,12 @@ export class HomeComponent {
         .subscribe((result: any) => {
           console.log(result);
           this.operations.push(result);
+          this.dataSource.data = this.operations;
         });
     });
   }
 
-showCategory: boolean = false
+  showCategory: boolean = false;
 
   createCategory() {
     this.showCategory = true;
@@ -174,14 +193,10 @@ showCategory: boolean = false
 
     dialogRef.afterClosed().subscribe((data) => {
       if (!data) return;
-      this.apiService
-        .createCategory(
-          data.name
-        )
-        .subscribe((result: any) => {
-          console.log(result);
-          this.operations.push(result);
-        });
+      this.apiService.createCategory(data.name).subscribe((result: any) => {
+        console.log(result);
+        this.categories.push(result);
+      });
     });
   }
 
@@ -190,9 +205,9 @@ showCategory: boolean = false
       this.apiService.deleteOperation(id).subscribe((res) => {
         if (res.success) {
           this.operations = this.operations.filter((t: any) => t.id !== id);
-          this.filteredOperations = this.operations;
+          this.dataSource.data = this.operations;
         }
       });
     }
   }
-  }
+}
