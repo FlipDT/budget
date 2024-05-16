@@ -157,6 +157,26 @@ export class ApiService {
     );
   }
 
+ updateOperation(
+  title: string,
+  description: string,
+  amount: number,
+  selectedCategoryId: number
+ ) {
+  return this.http.post(
+    '/budget/operations',
+    { title, description, amount, categoryId: selectedCategoryId },
+    {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    }
+  );
+ }
+
+
+
+
 }
 
   
