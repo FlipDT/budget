@@ -50,7 +50,7 @@
           <button
             mat-icon-button
             color="warn"
-            (click)="deleteOperation(operation.id)"
+            (click)="deleteOperation(operation.id); $event.stopPropagation()"
           >
             <mat-icon>delete</mat-icon>
           </button>
