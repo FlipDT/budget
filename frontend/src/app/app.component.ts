@@ -36,6 +36,6 @@ export class AppComponent {
 
   logout() {
     this.username = '';
-    this.username = this.apiService.logout();
+    this.apiService.logout();
   }
 }

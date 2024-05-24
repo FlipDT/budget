@@ -2,8 +2,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, catchError, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { LoginDto, RegisterDto, Category, Operation } from '../model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,8 @@ export class ApiService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private toast: ToastrService
+    private toast: ToastrService,
+    private snackBar: MatSnackBar
   ) {
     const fetchedToken = localStorage.getItem('act');
 
@@ -53,9 +55,11 @@ export class ApiService {
             this.jwtToken$.next(this.token);
 
             this.router.navigateByUrl('/').then(() => {
-              this.toast.success('Login successful', '', {
-                timeOut: 3000,
-                positionClass: 'toast-top-center',
+              this.snackBar.open('Login successful', 'Close', {
+                duration: 3000,
+                verticalPosition: 'top',
+                horizontalPosition: 'center',
+                panelClass: ['success-snackbar'],
               });
             });
           } else {
@@ -63,8 +67,11 @@ export class ApiService {
           }
         },
         (error: HttpErrorResponse) => {
-          this.toast.error('Login failed. Please try again.', '', {
-            timeOut: 3000,
+          this.snackBar.open('Login failed. Please try again.', 'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            panelClass: ['error-snackbar'],
           });
         }
       );
@@ -72,35 +79,44 @@ export class ApiService {
 
   logout() {
     (this.token = ''), this.jwtToken$.next(this.token);
-    this.toast
-      .success('Logged out successfully', '', {
-        timeOut: 500,
+    this.snackBar
+      .open('Logged out successfully', 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        horizontalPosition: 'center',
+        panelClass: ['success-snackbar'],
       })
-      .onHidden.subscribe(() => {
+      .afterDismissed()
+      .subscribe(() => {
         localStorage.removeItem('act');
         this.router.navigateByUrl('/login').then();
       });
-    return '';
   }
-  
+
   register(username: string, password: string): void {
-     this.http.post('/auth/register', 
-      {username, password}
-     ).subscribe(
-        () => {
-          this.toast.success('Registration successful', '', {
-            timeOut: 3000,
-            positionClass: 'toast-top-center',
-          });
-        },
-        (error: HttpErrorResponse) => {
-          this.toast.error('Registration failed. Please try again.', '', {
-            timeOut: 3000,
-          });
-        }
-      );
-    };
-    
+    this.http.post('/auth/register', { username, password }).subscribe(
+      () => {
+        this.snackBar.open('Utilisateur créé', 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+          panelClass: ['success-snackbar'],
+        });
+      },
+      (error: HttpErrorResponse) => {
+        this.snackBar.open(
+          'Enregistrement échoué, merci de reessayer',
+          'Close',
+          {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            panelClass: ['error-snackbar'],
+          }
+        );
+      }
+    );
+  }
 
   getAllCategories(): Observable<any> {
     return this.http.get(`/budget/categories`, {
@@ -116,6 +132,104 @@ export class ApiService {
     amount: number,
     selectedCategoryId: number
   ) {
+    return this.http
+      .post(
+        '/budget/operations',
+        { title, description, amount, categoryId: selectedCategoryId },
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
+      .pipe(
+        tap(() => {
+          this.snackBar.open('Opération créée avec succès', 'Fermer', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            panelClass: ['success-snackbar'],
+          });
+        }),
+        catchError((error: any) => {
+          this.snackBar.open(
+            "Erreur lors de la création de l'opération",
+            'Fermer',
+            {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center',
+              panelClass: ['error-snackbar'],
+            }
+          );
+          return throwError(error);
+        })
+      );
+  }
+
+  deleteOperation(operationId: number) {
+    return this.http
+      .delete<{ success: boolean }>(`/budget/operations/${operationId}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .pipe(
+        tap((res) => {
+          if (res.success) {
+            this.snackBar.open('Operation supprimé avec succès', 'Close', {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center',
+              panelClass: ['error-snackbar'],
+            });
+          }
+        })
+      );
+  }
+
+  createCategory(name: string) {
+    return this.http
+      .post(
+        '/budget/categories',
+        { name },
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
+      .pipe(
+        tap(() => {
+          this.snackBar.open('Catégorie créée avec succès', 'Fermer', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            panelClass: ['success-snackbar'],
+          });
+        }),
+        catchError((error: any) => {
+          this.snackBar.open(
+            'Erreur lors de la création de la catégorie',
+            'Fermer',
+            {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center',
+              panelClass: ['error-snackbar'],
+            }
+          );
+          return throwError(error);
+        })
+      );
+  }
+
+  updateOperation(
+    title: string,
+    description: string,
+    amount: number,
+    selectedCategoryId: number
+  ) {
     return this.http.post(
       '/budget/operations',
       { title, description, amount, categoryId: selectedCategoryId },
@@ -126,57 +240,4 @@ export class ApiService {
       }
     );
   }
-
-  deleteOperation(operationId: number) {
-    return this.http
-    .delete<{ success: boolean }>(`/budget/operations/${operationId}`, {
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-    })
-    .pipe(
-      tap((res) => {
-        if (res.success) {
-          this.toast.success('Operation supprimé avec succès')
-        }
-      })
-    )
-  }
-
-  createCategory(
-    name: string,
-  ) {
-    return this.http.post(
-      '/budget/categories',
-      { name },
-      {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      }
-    );
-  }
-
- updateOperation(
-  title: string,
-  description: string,
-  amount: number,
-  selectedCategoryId: number
- ) {
-  return this.http.post(
-    '/budget/operations',
-    { title, description, amount, categoryId: selectedCategoryId },
-    {
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-    }
-  );
- }
-
-
-
-
 }
-
-  

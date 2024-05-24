@@ -3,3 +3,14 @@
 @tailwind utilities;
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+::ng-deep .success-snackbar {
+    background-color: #4caf50 !important; /* Vert */
+    color: white !important;
+  }
+  
+  ::ng-deep .error-snackbar {
+    background-color: #f44336 !important; /* Rouge */
+    color: white !important;
+  }
