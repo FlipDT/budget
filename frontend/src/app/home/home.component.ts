@@ -140,35 +140,40 @@ export class HomeComponent {
   }
 
   onClickRow(operation: Operation) {
-      const dialogRef = this.dialog.open(UpdateOperationComponent, {
-        width: '1000px',
-        hasBackdrop: true,
-        role: 'dialog',
-        height: '500px',
-      });
-  
-      dialogRef.afterClosed().subscribe((result) => {
-        console.log('La fenêtre modale a été fermée.');
-        this.showOperation = false;
-      });
-  
-      dialogRef.afterClosed().subscribe((data) => {
-        if (!data) return;
-        this.apiService
-          .updateOperation(
-            data.title,
-            data.description,
-            data.amount,
-            data.categoryId
-          )
-          .subscribe((result: any) => {
-            console.log(result);
-            this.operations.push(result);
-            this.dataSource.data = this.operations;
-          });
-      });
-    }
-  
+    console.log(operation);
+    const dialogRef = this.dialog.open(UpdateOperationComponent, {
+      width: '1000px',
+      hasBackdrop: true,
+      role: 'dialog',
+      height: '500px',
+      data: {
+        operationId: operation.id,
+        operation,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('La fenêtre modale a été fermée.');
+      this.showOperation = false;
+    });
+
+    dialogRef.afterClosed().subscribe((data) => {
+      if (!data) return;
+      this.apiService
+        .updateOperation(
+          data.operationId,
+          data.title,
+          data.description,
+          data.amount,
+          data.categoryId
+        )
+        .subscribe((result: any) => {
+          console.log(result);
+          this.operations.push(result);
+          this.dataSource.data = this.operations;
+        });
+    });
+  }
 
   showOperation: boolean = false;
 
@@ -238,8 +243,4 @@ export class HomeComponent {
       });
     }
   }
-
-
-
-  
 }
