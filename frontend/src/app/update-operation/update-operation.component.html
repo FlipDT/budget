@@ -1,48 +1,47 @@
 <div class="container mx-auto">
-    <div class="row">
-      <div class="col-12 text-center">
-        <h1 class="modal-header text-center fw-bold">
-          Ajouter une nouvelle opération
-        </h1>
-      </div>
-      <div class="col-12">
-        <p class="flex flex-col flex-grow py-4">
-          <mat-form-field>
-            <mat-label>Title</mat-label>
-            <input matInput name="title" [(ngModel)]="title" />
-          </mat-form-field>
-          <br />
-          <mat-form-field>
-            <mat-label>Description</mat-label>
-            <textarea
-              matInput
-              name="description"
-              [(ngModel)]="description"
-            ></textarea>
-          </mat-form-field>
-          <br />
-          <mat-form-field>
-            <mat-label>Amount</mat-label>
-            <input matInput type="number" name="amount" [(ngModel)]="amount" />
-          </mat-form-field>
-          <br />
-  
-          <mat-form-field>
-            <mat-label>Categories</mat-label>
-            <mat-select [(value)]="selectedCategory">
-              <mat-option></mat-option>
-              @for (category of categories; track category.id) {
-                <mat-option [value]="category">{{ category.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-      </div>
-      <div class="flex justify-end">
-        <button mat-flat-button (click)="onCancel()">Cancel</button>
-        <button mat-raised-button color="primary" (click)="updateOperation()">
-          Modifier
-        </button>
-      </div>
+  <div class="row">
+    <div class="col-12 text-center">
+      <h1 class="modal-header text-center fw-bold">Modifier l'operation</h1>
+    </div>
+    <div class="col-12">
+      <p class="flex flex-col flex-grow py-4">
+        <mat-form-field>
+          <mat-label>Title</mat-label>
+          <input matInput name="title" [(ngModel)]="title" />
+        </mat-form-field>
+        <br />
+        <mat-form-field>
+          <mat-label>Description</mat-label>
+          <textarea
+            matInput
+            name="description"
+            [(ngModel)]="description"
+          ></textarea>
+        </mat-form-field>
+        <br />
+        <mat-form-field>
+          <mat-label>Amount</mat-label>
+          <input matInput type="number" name="amount" [(ngModel)]="amount" />
+        </mat-form-field>
+        <br />
+
+        <mat-form-field>
+          <mat-label>Categories</mat-label>
+          <mat-select [(value)]="selectedCategory">
+            <mat-option></mat-option>
+            @for (category of categories; track category.id) {
+            <mat-option [value]="category">{{ category.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </p>
+    </div>
+
+    <div class="flex justify-end">
+      <button mat-flat-button (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="updateOperation()">
+        Modifier
+      </button>
     </div>
   </div>
-  
+</div>

@@ -228,10 +228,11 @@ export class ApiService {
     title: string,
     description: string,
     amount: number,
-    selectedCategoryId: number
+    selectedCategoryId: number,
+    operationId: number
   ) {
-    return this.http.post(
-      '/budget/operations',
+    return this.http.patch(
+      `/budget/operations/${operationId}`,
       { title, description, amount, categoryId: selectedCategoryId },
       {
         headers: {

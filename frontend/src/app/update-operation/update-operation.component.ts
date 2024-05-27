@@ -27,7 +27,7 @@ export class UpdateOperationComponent {
   amount!: number;
   categories: Category[] = [];
   selectedCategory!: Category;
-
+  operationId: number;
 
   constructor(
     public dialogRef: MatDialogRef<UpdateOperationComponent>,
@@ -35,36 +35,27 @@ export class UpdateOperationComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.getCategories();
+    this.operationId = data.operationId;
   }
 
-
-
   updateOperation() {
-    console.log(
-      this.title,
-      this.description,
-      this.amount,
-      this.selectedCategory.id
-    );
+  
     this.apiService
-      .createOperation(
+      .updateOperation(
         this.title,
         this.description,
         this.amount,
-        this.selectedCategory.id
+        this.selectedCategory.id,
+        this.operationId
       )
       .subscribe(() => {
         this.dialogRef.close();
       });
-  
   }
-
-
 
   getCategories() {
     this.apiService.getAllCategories().subscribe((categories) => {
       this.categories = categories;
-      console.log(categories);
     });
   }
 
